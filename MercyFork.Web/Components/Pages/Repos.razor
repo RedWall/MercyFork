@@ -1,0 +1,72 @@
+﻿@page "/repos"
+@using Octokit
+@using Humanizer
+@attribute [StreamRendering(true)]
+@attribute [OutputCache(Duration = 5)]
+
+<PageTitle>Repos</PageTitle>
+
+<h1>Repos</h1>
+
+<p>List of popular GitHub repos with few or no forks</p>
+
+@if (searchResult == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div>
+        Max API Requests per minute: @rateLimit?.Limit<br />
+        Remaining Requests: @rateLimit?.Remaining<br />
+        Limit Resets at @rateLimit?.Reset.Humanize()
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Stars</th>
+                <th>Forks</th>
+                <th>Subscribers</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var repo in searchResult.Items)
+            {
+                <tr>
+                    <td><a href="@repo.HtmlUrl" target="_blank">@repo.Name</a></td>
+                    <td>@repo.StargazersCount</td>
+                    <td>@repo.ForksCount</td>
+                    <td>@repo.SubscribersCount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private SearchRepositoryResult? searchResult;
+    private RateLimit? rateLimit;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var client = new GitHubClient(new ProductHeaderValue("mercy-fork"));
+
+        var request = new SearchRepositoriesRequest()
+            {
+                Archived = false,
+                PerPage = 50,
+                SortField = RepoSearchSort.Stars,
+                Order = SortDirection.Descending,
+                Stars = Octokit.Range.GreaterThan(1000)
+            };
+
+        var results = await client.Search.SearchRepo(request);
+
+        searchResult = results;
+
+        var apiInfo = client.GetLastApiInfo();
+
+        rateLimit = apiInfo.RateLimit;
+    }
+}
