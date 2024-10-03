@@ -1,7 +1,4 @@
-﻿using System.ComponentModel;
-using System.Xml.Linq;
-
-using MercyFork.Data.Models;
+﻿using MercyFork.Data.Models;
 
 using Octokit;
 

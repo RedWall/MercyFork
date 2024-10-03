@@ -1,11 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using System.Globalization;
-using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MercyFork.Data.Models
 {
-    public record RepoSearchCriteria : IParsable<RepoSearchCriteria>
+    public record RepoSearchCriteria
     {
         public string? SearchText { get; set; }
         public bool? Archived { get; set; }
@@ -17,29 +16,16 @@ namespace MercyFork.Data.Models
         public int Page { get; set; } = 1;
         public int PageSize { get; set; } = 50;
 
-        public static RepoSearchCriteria Parse(string s) => Parse(s, CultureInfo.InvariantCulture);
-        public static RepoSearchCriteria Parse(string s, IFormatProvider? formatProvider)
-        {
-            if (TryParse(s, formatProvider, out var result))
-            {
-                return result;
-            }
-
-            throw new FormatException($"Invalid input string: {s}");
-        }
-
-        public static bool TryParse([NotNullWhen(true)] string? s, [MaybeNullWhen(false)] out RepoSearchCriteria result) => TryParse(s, CultureInfo.InvariantCulture, out result);
-
-        public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? formatProvider, [MaybeNullWhen(false)] out RepoSearchCriteria result)
+        public static bool FromQueryString([NotNullWhen(true)] string? queryString, [MaybeNullWhen(false)] out RepoSearchCriteria result) 
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(s))
+                if (string.IsNullOrWhiteSpace(queryString))
                 {
-                    throw new ArgumentException("Invalid query string", nameof(s));
+                    throw new ArgumentException("Invalid query string", nameof(queryString));
                 }
 
-                var keyValuePairs = s.Split('&');
+                var keyValuePairs = queryString.Split('&');
 
                 // Create a dictionary to store the parsed values
                 var parsedValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -85,17 +71,17 @@ namespace MercyFork.Data.Models
                     searchCriteria.PageSize = pageSize;
                 }
 
-                if (parsedValues.TryGetValue("Stars", out var starsValue) && RepoSearchRange.TryParse(starsValue, out var starsRange))
+                if (parsedValues.TryGetValue("Stars", out var starsValue) && RepoSearchRange.FromQueryString(starsValue, out var starsRange))
                 {
                     searchCriteria.Stars = starsRange with { Field = "Stars" };
                 }
 
-                if (parsedValues.TryGetValue("Forks", out var forksValue) && RepoSearchRange.TryParse(forksValue, out var forksRange))
+                if (parsedValues.TryGetValue("Forks", out var forksValue) && RepoSearchRange.FromQueryString(forksValue, out var forksRange))
                 {
                     searchCriteria.Forks = forksRange with { Field = "Forks" };
                 }
 
-                if (parsedValues.TryGetValue("Followers", out var followersValue) && RepoSearchRange.TryParse(followersValue, out var followersRange))
+                if (parsedValues.TryGetValue("Followers", out var followersValue) && RepoSearchRange.FromQueryString(followersValue, out var followersRange))
                 {
                     searchCriteria.Followers = followersRange with { Field = "Followers" };
                 }
@@ -117,7 +103,7 @@ namespace MercyFork.Data.Models
     /// Helper class in generating the range values for a qualifier e.g. In or Size qualifiers
     /// </summary>
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    public record RepoSearchRange : IParsable<RepoSearchRange>
+    public record RepoSearchRange
     {
         public enum SearchQualifierOperator
         {
@@ -164,25 +150,10 @@ namespace MercyFork.Data.Models
         public int Max { get; set; }
         public int Size { get; set; }
 
-        public string ToQueryStringValue()
-        {
-            return SearchQualifier switch
-            {
-                SearchQualifierOperator.Exactly => $"e{Size}",
-                SearchQualifierOperator.Between => $"{Min}..{Max}",
-                SearchQualifierOperator.GreaterThan => $"g{Size}",
-                SearchQualifierOperator.LessThan => $"l{Size}",
-                SearchQualifierOperator.LessThanOrEqualTo => $"le{Size}",
-                SearchQualifierOperator.GreaterThanOrEqualTo => $"ge{Size}",
-                _ => ""
-            };
-        }
-
         internal string DebuggerDisplay
         {
-            get { return string.Format(CultureInfo.InvariantCulture, "Query: {0}", ToString()); }
+            get { return string.Format("Query: {0}", ToString()); }
         }
-
 
         public override string ToString()
         {
@@ -198,19 +169,26 @@ namespace MercyFork.Data.Models
             };
         }
 
-        public static RepoSearchRange Parse(string queryString) => Parse(queryString, CultureInfo.InvariantCulture);
-
-        public static RepoSearchRange Parse(string queryString, IFormatProvider? formatProvider)
+        public string ToQueryString()
         {
-            if (TryParse(queryString, formatProvider, out var result))
-            {
-                return result;
-            }
-            throw new FormatException($"Invalid input string: {queryString}");
+            return $"{Field}=" + ToQueryStringValue();
         }
 
-        public static bool TryParse([NotNullWhen(true)] string? s, [MaybeNullWhen(false)] out RepoSearchRange result) => TryParse(s, CultureInfo.InvariantCulture, out result);
-        public static bool TryParse([NotNullWhen(true)] string? queryString, IFormatProvider? formatProvider, [MaybeNullWhen(false)] out RepoSearchRange result)
+        public string ToQueryStringValue()
+        {
+            return SearchQualifier switch
+            {
+                SearchQualifierOperator.Exactly => $"e{Size}",
+                SearchQualifierOperator.Between => $"{Min}..{Max}",
+                SearchQualifierOperator.GreaterThan => $"g{Size}",
+                SearchQualifierOperator.LessThan => $"l{Size}",
+                SearchQualifierOperator.LessThanOrEqualTo => $"le{Size}",
+                SearchQualifierOperator.GreaterThanOrEqualTo => $"ge{Size}",
+                _ => ""
+            };
+        }
+
+        public static bool FromQueryString([NotNullWhen(true)] string? queryString, [MaybeNullWhen(false)] out RepoSearchRange result) 
         {
             try
             {

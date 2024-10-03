@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 
 namespace MercyFork.ApiService
 {
-    public class RepoSearchCriteriaBinder : IModelBinder
+    public class RepoSearchRangeBinder : IModelBinder
     {
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {
@@ -13,13 +13,13 @@ namespace MercyFork.ApiService
 
             var query = bindingContext.HttpContext.Request.QueryString.Value;
 
-            if (string.IsNullOrWhiteSpace(query))
+            if (query is null)
             {
                 bindingContext.Result = ModelBindingResult.Failed();
                 return Task.CompletedTask;
             }
 
-            if (RepoSearchCriteria.FromQueryString(query, out var searchCriteria))
+            if (RepoSearchRange.FromQueryString(query, out var searchCriteria))
             {
                 bindingContext.Result = ModelBindingResult.Success(searchCriteria);
             }
@@ -32,15 +32,15 @@ namespace MercyFork.ApiService
         }
     }
 
-    public class RepoSearchCriteriaBinderProvider : IModelBinderProvider
+    public class RepoSearchRangeBinderProvider : IModelBinderProvider
     {
         public IModelBinder? GetBinder(ModelBinderProviderContext context)
         {
             ArgumentNullException.ThrowIfNull(context);
 
-            if (context.Metadata.ModelType == typeof(RepoSearchCriteria))
+            if (context.Metadata.ModelType == typeof(RepoSearchRange))
             {
-                return new BinderTypeModelBinder(typeof(RepoSearchCriteriaBinder));
+                return new BinderTypeModelBinder(typeof(RepoSearchRangeBinder));
             }
 
             return null;
