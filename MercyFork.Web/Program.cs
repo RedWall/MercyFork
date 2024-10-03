@@ -1,3 +1,6 @@
+using System.Diagnostics.Metrics;
+
+using MercyFork.Data.Models;
 using MercyFork.Web;
 using MercyFork.Web.Components;
 
@@ -6,18 +9,17 @@ var builder = WebApplication.CreateBuilder(args);
 // Add service defaults & Aspire components.
 builder.AddServiceDefaults();
 
-// Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+                .AddInteractiveServerComponents();
 
 builder.Services.AddOutputCache();
 
-//builder.Services.AddHttpClient<WeatherApiClient>(client =>
-//    {
-//        // This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
-//        // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
-//        client.BaseAddress = new("https+http://apiservice");
-//    });
+builder.Services.AddHttpClient<IMercyForkApiClient, MercyForkApiClient>(client =>
+    {
+        // This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
+        // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
+        client.BaseAddress = new("https+http://apiservice");
+    });
 
 var app = builder.Build();
 
@@ -36,7 +38,8 @@ app.UseAntiforgery();
 app.UseOutputCache();
 
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+   .AddInteractiveServerRenderMode()
+   .AddAdditionalAssemblies(typeof(MercyFork.Web.SharedComponents._Imports).Assembly);
 
 app.MapDefaultEndpoints();
 

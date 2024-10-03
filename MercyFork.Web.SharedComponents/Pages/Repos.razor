@@ -1,0 +1,129 @@
+﻿@page "/repos"
+@rendermode InteractiveServer
+@attribute [StreamRendering(true)]
+
+@* @attribute [OutputCache(Duration = 5)] *@
+
+@inject IMercyForkApiClient client
+
+<PageTitle>Repos</PageTitle>
+
+<h1>Repos</h1>
+
+<p>List of popular GitHub repos with few or no forks</p>
+
+@if (searchResult == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <form method="post" @onsubmit="SearchRepos" @onsubmit:preventDefault @formname="search-repos-form">
+        <AntiforgeryToken />
+        <div class="input-group mb-3">
+            <InputText @bind-Value="SearchCriteria.SearchText" class="form-control" />
+            <button type="submit" class="btn btn-primary">Search Repos</button>
+        </div>
+        <div class="row row-cols-sm-auto justify-content-sm-between g-3 align-items-center small">
+            <div class="col-12 d-flex flex-row align-items-center">
+                Found @searchResult.TotalCount repos@(searchResult.IncompleteResults ? ", results are incomplete" : "")
+            </div>
+            <div class="col-12 d-flex flex-row align-items-center">
+                <Range @bind-SearchRange="SearchCriteria.Stars" />
+            </div>
+            <div class="col-12 d-flex flex-row align-items-center">
+                Sort by
+                <InputSelect @bind-Value="SearchCriteria.SortField" class="form-select form-select-sm w-auto mx-1">
+                    <option value="Stars">Stars</option>
+                    <option value="Forks">Forks</option>
+                    <option value="Updated">Last Updated</option>
+                </InputSelect>
+                <InputSelect @bind-Value="SearchCriteria.SortDirection" class="form-select form-select-sm w-auto mx-1">
+                    <option value="Ascending">Ascending</option>
+                    <option value="Descending">Descending</option>
+                </InputSelect>
+            </div>
+            <div class="col-12 d-flex flex-row align-items-center">
+                Show
+                <InputSelect @bind-Value="SearchCriteria.PageSize" class="form-select form-select-sm w-auto mx-1">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </InputSelect>
+                repos
+            </div>
+        </div>
+    </form>
+
+    if (searchResult.TotalCount == 0)
+    {
+        <p>No repos found</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th width="100">Stars</th>
+                    <th width="100">Forks</th>
+                    <th width="100">Open Issues</th>
+                    <th width="200">Latest Push</th>
+                    <th width="200">Updated</th>
+                    <th width="200">License</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var repo in searchResult.Items)
+                {
+                    <tr>
+                        <td>
+                            <a href="@repo.HtmlUrl" target="_blank" title="View @repo.Name on GitHub">@repo.Name</a>
+                            <p>@repo.Description</p>
+                        </td>
+                        <td>@repo.StargazersCount</td>
+                        <td>@repo.ForksCount</td>
+                        <td>@repo.OpenIssuesCount</td>
+                        <td><span title="@repo.PushedAt">@repo.PushedAt.Humanize()</span></td>
+                        <td><span title="@repo.UpdatedAt">@repo.UpdatedAt.Humanize()</span></td>
+                        <td><a href="@repo.License.Url" target="_blank" title="View @repo.License.Name License">@repo.License.Name</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+@code {
+    private SearchRepoResult? searchResult;
+    private bool isInitialLoad = true;
+
+    [SupplyParameterFromForm(FormName = "search-repos-form")]
+    public RepoSearchCriteria SearchCriteria { get; set; } = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (isInitialLoad)
+        {
+            isInitialLoad = false;
+
+            SearchCriteria.Archived = false;
+            SearchCriteria.Page = 1;
+            SearchCriteria.Stars = new() { Field = "Stars", Size = 100, SearchQualifier = RepoSearchRange.SearchQualifierOperator.GreaterThanOrEqualTo };
+            SearchCriteria.Forks = new() { Field = "Forks", Size = 10, SearchQualifier = RepoSearchRange.SearchQualifierOperator.LessThan }; ;
+            SearchCriteria.Followers = new() { Field = "Followers", Size = 100, SearchQualifier = RepoSearchRange.SearchQualifierOperator.GreaterThanOrEqualTo }; ;
+            await SearchRepos();
+        }
+    }
+
+    private async Task SearchRepos()
+    {
+
+        var results = await client.GetRepos(SearchCriteria);
+
+        searchResult = results;
+
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,39 @@
+﻿<label for="@($"{SearchRange.Field}_qualifier")" class="mx-1">@SearchRange.Field</label>
+<InputSelect @bind-Value="SearchRange.SearchQualifier" id="@($"{SearchRange.Field}_qualifier")" class="form-select form-select-sm w-auto">
+    @foreach (var qualifier in Enum.GetValues(typeof(RepoSearchRange.SearchQualifierOperator)).Cast<RepoSearchRange.SearchQualifierOperator>())
+    {
+        <option value="@qualifier">@qualifier.Humanize()</option>
+    }
+</InputSelect>
+@if (SearchRange.SearchQualifier == RepoSearchRange.SearchQualifierOperator.Between)
+{
+    <div class="input-group input-group-sm">
+        <InputNumber @bind-Value="SearchRange.Min" id="@($"{SearchRange.Field}_min")" class="form-control form-control-sm w-auto" placeholder="min" />
+        <span class="input-group-text">and</span>
+        <InputNumber @bind-Value="SearchRange.Max" id="@($"{SearchRange.Field}_max")" class="form-control form-control-sm w-auto" placeholder="max" />
+    </div>
+}
+else
+{
+    <InputNumber @bind-Value="SearchRange.Size" id="@($"{SearchRange.Field}_size")" class="form-control form-control-sm w-auto" placeholder="size" />
+}
+
+@code {
+    [Parameter]
+    public required RepoSearchRange SearchRange { get; set; }
+
+    [Parameter]
+    public EventCallback<RepoSearchRange> SearchRangeChanged { get; set; }
+
+    public bool ShowRangeInput { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+    }
+}

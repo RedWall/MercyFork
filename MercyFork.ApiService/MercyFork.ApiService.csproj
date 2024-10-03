@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MercyFork.Data.Models\MercyFork.Data.Models.csproj" />
+    <ProjectReference Include="..\MercyFork.Data\MercyFork.Data.csproj" />
     <ProjectReference Include="..\MercyFork.ServiceDefaults\MercyFork.ServiceDefaults.csproj" />
   </ItemGroup>
 
