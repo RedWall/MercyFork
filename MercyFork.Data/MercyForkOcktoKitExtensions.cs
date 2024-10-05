@@ -73,9 +73,5 @@ namespace MercyFork.Data
         {
             return new RepoLicense(license.Name, license.Url);
         }
-
-
-
-
     }
 }

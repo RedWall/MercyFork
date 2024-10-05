@@ -41,14 +41,17 @@ namespace MercyFork.Data
             var results = data.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search.SearchText))
-                results = results.Where(r => r.Name.Contains(search.SearchText, StringComparison.OrdinalIgnoreCase) || (!string.IsNullOrWhiteSpace(r.Description) && r.Description.Contains(search.SearchText, StringComparison.OrdinalIgnoreCase)));
+                results = results.Where(r =>
+                    r.Name.Contains(search.SearchText, StringComparison.OrdinalIgnoreCase) ||
+                    (!string.IsNullOrWhiteSpace(r.Description) && 
+                      r.Description.Contains(search.SearchText, StringComparison.OrdinalIgnoreCase))
+                    );
 
             if (search.Archived is bool isArchived)
                 results = results.Where(r => r.Archived == isArchived);
 
             if (search.Stars is not null)
             {
-
                 results = search.Stars.SearchQualifier switch
                 {
                     RepoSearchRange.SearchQualifierOperator.GreaterThan => results.Where(r => r.StargazersCount > search.Stars.Size),
@@ -59,24 +62,35 @@ namespace MercyFork.Data
                     RepoSearchRange.SearchQualifierOperator.Between => results.Where(r => r.StargazersCount >= search.Stars.Min && r.StargazersCount <= search.Stars.Max),
                     _ => results
                 };
-
-                //var starsString = search.Stars.ToString();
-                //var skipChars = new[] { '>', '<', '=' };
-
-                //var operation = starsString.TakeWhile(c => skipChars.Contains(c)).ToString();
-
-                //if (int.TryParse(starsString.SkipWhile(c => skipChars.Contains(c)).ToString(), out var starCount))
-                //{
-                //    results = operation switch
-                //    {
-                //        ">" => results.Where(r => r.StargazersCount > starCount),
-                //        "<" => results.Where(r => r.StargazersCount < starCount),
-                //        ">=" => results.Where(r => r.StargazersCount >= starCount),
-                //        "<=" => results.Where(r => r.StargazersCount <= starCount),
-                //        _ => results
-                //    };
-                //}
             }
+
+            if (search.Forks is not null)
+            {
+                results = search.Forks.SearchQualifier switch
+                {
+                    RepoSearchRange.SearchQualifierOperator.GreaterThan => results.Where(r => r.ForksCount > search.Forks.Size),
+                    RepoSearchRange.SearchQualifierOperator.LessThan => results.Where(r => r.ForksCount < search.Forks.Size),
+                    RepoSearchRange.SearchQualifierOperator.GreaterThanOrEqualTo => results.Where(r => r.ForksCount >= search.Forks.Size),
+                    RepoSearchRange.SearchQualifierOperator.LessThanOrEqualTo => results.Where(r => r.ForksCount <= search.Forks.Size),
+                    RepoSearchRange.SearchQualifierOperator.Exactly => results.Where(r => r.ForksCount == search.Forks.Size),
+                    RepoSearchRange.SearchQualifierOperator.Between => results.Where(r => r.ForksCount >= search.Forks.Min && r.ForksCount <= search.Forks.Max),
+                    _ => results
+                };
+            }
+
+            //if (search.Followers is not null)
+            //{
+            //    results = search.Followers.SearchQualifier switch
+            //    {
+            //        RepoSearchRange.SearchQualifierOperator.GreaterThan => results.Where(r => r.SubscribersCount > search.Followers.Size),
+            //        RepoSearchRange.SearchQualifierOperator.LessThan => results.Where(r => r.SubscribersCount < search.Followers.Size),
+            //        RepoSearchRange.SearchQualifierOperator.GreaterThanOrEqualTo => results.Where(r => r.SubscribersCount >= search.Followers.Size),
+            //        RepoSearchRange.SearchQualifierOperator.LessThanOrEqualTo => results.Where(r => r.SubscribersCount <= search.Followers.Size),
+            //        RepoSearchRange.SearchQualifierOperator.Exactly => results.Where(r => r.SubscribersCount == search.Followers.Size),
+            //        RepoSearchRange.SearchQualifierOperator.Between => results.Where(r => r.SubscribersCount >= search.Followers.Min && r.ForksCount <= search.Followers.Max),
+            //        _ => results
+            //    };
+            //}
 
             if (!string.IsNullOrWhiteSpace(search.SortField) && Enum.TryParse<RepoSearchSort>(search.SortField, out var sortVal) && Enum.TryParse<SortDirection>(search.SortDirection, out var sortDir))
             {
@@ -93,7 +107,7 @@ namespace MercyFork.Data
 
             results = results.Skip((search.Page - 1) * search.PageSize).Take(search.PageSize);
 
-            return new(totalResults, false, results.Select(r=> r.ToRepoInfo()).ToList());
+            return new(totalResults, false, results.Select(r => r.ToRepoInfo()).ToList());
         }
 
         private void ManageDataPaths()
@@ -146,7 +160,8 @@ namespace MercyFork.Data
         {
             var filePath = Path.Combine(folder, $"{fileName}.json");
 
-            if (File.Exists(filePath)) {
+            if (File.Exists(filePath))
+            {
                 File.Delete(filePath);
             }
 

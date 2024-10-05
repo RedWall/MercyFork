@@ -12,9 +12,12 @@ namespace MercyFork.Data.Models
         public RepoSearchRange? Forks { get; set; }
         public RepoSearchRange? Followers { get; set; }
         public string? SortField { get; set; } = "Stars";
-        public string SortDirection { get; set; } = "Descending";
+        public string? SortDirection { get; set; } = "Descending";
         public int Page { get; set; } = 1;
         public int PageSize { get; set; } = 50;
+
+        public static bool TryParse(string query, out RepoSearchCriteria? repoSearchCriteria)
+            => FromQueryString(query, out repoSearchCriteria);
 
         public static bool FromQueryString([NotNullWhen(true)] string? queryString, [MaybeNullWhen(false)] out RepoSearchCriteria result) 
         {
@@ -116,7 +119,7 @@ namespace MercyFork.Data.Models
             /// <summary>
             /// Between min and max "min..max"
             /// </summary>
-            [Display(Name = "Between")]
+            [Display(Name = "x..y")]
             Between,
 
             /// <summary>
@@ -187,6 +190,9 @@ namespace MercyFork.Data.Models
                 _ => ""
             };
         }
+
+        public static bool TryParse(string query, out RepoSearchRange? repoSearchRange)
+            => FromQueryString(query, out repoSearchRange);
 
         public static bool FromQueryString([NotNullWhen(true)] string? queryString, [MaybeNullWhen(false)] out RepoSearchRange result) 
         {

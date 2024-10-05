@@ -53,7 +53,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 app.UseExceptionHandler();
 
-app.MapGet("/repos", async ([FromServices] IMercyForkData data, [AsParameters] RepoSearchCriteria searchCriteria) =>
+app.MapGet("/repos", async (IMercyForkData data, [AsParameters]RepoSearchCriteria searchCriteria) =>
 {
     var result = await data.SearchRepos(searchCriteria);
 

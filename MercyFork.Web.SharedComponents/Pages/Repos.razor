@@ -20,38 +20,57 @@ else
 {
     <form method="post" @onsubmit="SearchRepos" @onsubmit:preventDefault @formname="search-repos-form">
         <AntiforgeryToken />
-        <div class="input-group mb-3">
-            <InputText @bind-Value="SearchCriteria.SearchText" class="form-control" />
-            <button type="submit" class="btn btn-primary">Search Repos</button>
-        </div>
-        <div class="row row-cols-sm-auto justify-content-sm-between g-3 align-items-center small">
-            <div class="col-12 d-flex flex-row align-items-center">
-                Found @searchResult.TotalCount repos@(searchResult.IncompleteResults ? ", results are incomplete" : "")
+        <div class="row row-cols-sm-auto justify-content-sm-between g-3 align-items-center mb-3">
+            <div class="input-group">
+                <InputText @bind-Value="SearchCriteria.SearchText" class="form-control" />
+                <button type="submit" class="btn btn-primary">Search Repos</button>
             </div>
-            <div class="col-12 d-flex flex-row align-items-center">
+        </div>
+        <div class="row row-cols-sm-auto justify-content-md-center g-3 align-items-center mb-3">
+            <div class="col-12">
                 <Range @bind-SearchRange="SearchCriteria.Stars" />
             </div>
-            <div class="col-12 d-flex flex-row align-items-center">
-                Sort by
-                <InputSelect @bind-Value="SearchCriteria.SortField" class="form-select form-select-sm w-auto mx-1">
-                    <option value="Stars">Stars</option>
-                    <option value="Forks">Forks</option>
-                    <option value="Updated">Last Updated</option>
-                </InputSelect>
-                <InputSelect @bind-Value="SearchCriteria.SortDirection" class="form-select form-select-sm w-auto mx-1">
-                    <option value="Ascending">Ascending</option>
-                    <option value="Descending">Descending</option>
-                </InputSelect>
+            <div class="col-12">
+                <Range @bind-SearchRange="SearchCriteria.Forks" />
             </div>
-            <div class="col-12 d-flex flex-row align-items-center">
-                Show
-                <InputSelect @bind-Value="SearchCriteria.PageSize" class="form-select form-select-sm w-auto mx-1">
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                </InputSelect>
-                repos
+@*             <div class="col-12">
+                <Range @bind-SearchRange="SearchCriteria.Followers" />
+            </div> *@
+        </div>
+        <div class="row row-cols-sm-auto justify-content-between g-3 align-items-center mb-3">
+            <div class="col-12">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text">
+                        Sort
+                    </span>
+                    <InputSelect @bind-Value="SearchCriteria.SortField" class="form-select form-select-sm w-auto">
+                        <option value="Stars">Stars</option>
+                        <option value="Forks">Forks</option>
+                        <option value="Updated">Updated</option>
+                    </InputSelect>
+                    <InputSelect @bind-Value="SearchCriteria.SortDirection" class="form-select form-select-sm w-auto">
+                        <option value="Ascending">Asc</option>
+                        <option value="Descending">Desc</option>
+                    </InputSelect>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text">Page Size</span>
+                    <InputSelect @bind-Value="SearchCriteria.PageSize" class="form-select form-select-sm w-auto">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </InputSelect>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col d-flex flex-row align-items-center">
+                <span class="small">
+                    Found @searchResult.TotalCount repos@(searchResult.IncompleteResults ? ", results are incomplete" : "")
+                </span>
             </div>
         </div>
     </form>
@@ -111,8 +130,8 @@ else
             SearchCriteria.Archived = false;
             SearchCriteria.Page = 1;
             SearchCriteria.Stars = new() { Field = "Stars", Size = 100, SearchQualifier = RepoSearchRange.SearchQualifierOperator.GreaterThanOrEqualTo };
-            SearchCriteria.Forks = new() { Field = "Forks", Size = 10, SearchQualifier = RepoSearchRange.SearchQualifierOperator.LessThan }; ;
-            SearchCriteria.Followers = new() { Field = "Followers", Size = 100, SearchQualifier = RepoSearchRange.SearchQualifierOperator.GreaterThanOrEqualTo }; ;
+            SearchCriteria.Forks = new() { Field = "Forks", Size = 10, SearchQualifier = RepoSearchRange.SearchQualifierOperator.LessThan };
+            SearchCriteria.Followers = new() { Field = "Followers", Size = 100, SearchQualifier = RepoSearchRange.SearchQualifierOperator.GreaterThanOrEqualTo };
             await SearchRepos();
         }
     }
