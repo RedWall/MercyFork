@@ -36,7 +36,7 @@ else
     {
         if (!Path.IsPathFullyQualified(settings.ReposFolder))
         {
-            settings.ReposFolder = Path.Combine(AppContext.BaseDirectory.Replace("""\MercyFork.ApiService\bin\Debug\net8.0""", ""), "TestData", settings.ReposFolder);
+            settings.ReposFolder = Path.Combine(AppContext.BaseDirectory.Replace("""\MercyFork.ApiService\bin\Debug\net9.0""", ""), "TestData", settings.ReposFolder);
         }
 
         if (!Directory.Exists(settings.ReposFolder))
