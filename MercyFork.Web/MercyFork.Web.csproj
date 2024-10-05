@@ -1,23 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Humanizer" Version="2.14.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Humanizer" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\MercyFork.Data.Models\MercyFork.Data.Models.csproj" />
-    <ProjectReference Include="..\MercyFork.ServiceDefaults\MercyFork.ServiceDefaults.csproj" />
-    <ProjectReference Include="..\MercyFork.Web.SharedComponents\MercyFork.Web.SharedComponents.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\MercyFork.Data.Models\MercyFork.Data.Models.csproj" />
+		<ProjectReference Include="..\MercyFork.ServiceDefaults\MercyFork.ServiceDefaults.csproj" />
+		<ProjectReference Include="..\MercyFork.Web.SharedComponents\MercyFork.Web.SharedComponents.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Models\" />
+	</ItemGroup>
 
 </Project>

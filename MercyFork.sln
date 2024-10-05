@@ -17,6 +17,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MercyFork.Web.SharedComponents", "MercyFork.Web.SharedComponents\MercyFork.Web.SharedComponents.csproj", "{26730D51-8252-4A10-B9B8-A17654A7DF99}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Root", "Root", "{5F2E1EC4-2572-4060-8D9A-EED7B4A06EE5}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Packages.props = Directory.Packages.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
