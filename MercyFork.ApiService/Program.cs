@@ -2,9 +2,6 @@ using MercyFork.ApiService;
 using MercyFork.Data;
 using MercyFork.Data.Models;
 
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-
 using Octokit;
 
 var builder = WebApplication.CreateBuilder(args);
