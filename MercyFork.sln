@@ -19,6 +19,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Root", "Root", "{5F2E1EC4-2572-4060-8D9A-EED7B4A06EE5}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Packages.props = Directory.Packages.props
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub", "GitHub", "{B7277B24-84D5-48C7-96BE-67355914BE3B}"
@@ -26,6 +27,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{76E7AFBA-6EC2-4869-B4D2-51FDA4EB5FFC}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build.yml = .github\workflows\build.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestData", "TestData", "{965D23D4-66F9-4FAA-AB83-CD3D1D9B5E0B}"
+	ProjectSection(SolutionItems) = preProject
+		TestData\GetReposFromGithub.ps1 = TestData\GetReposFromGithub.ps1
 	EndProjectSection
 EndProject
 Global
@@ -69,6 +75,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{B7277B24-84D5-48C7-96BE-67355914BE3B} = {5F2E1EC4-2572-4060-8D9A-EED7B4A06EE5}
 		{76E7AFBA-6EC2-4869-B4D2-51FDA4EB5FFC} = {B7277B24-84D5-48C7-96BE-67355914BE3B}
+		{965D23D4-66F9-4FAA-AB83-CD3D1D9B5E0B} = {5F2E1EC4-2572-4060-8D9A-EED7B4A06EE5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1D02CF89-DE54-4F6A-9974-7103AE72DE89}
