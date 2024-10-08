@@ -13,7 +13,7 @@ namespace MercyFork.ApiService
 
             var query = bindingContext.HttpContext.Request.QueryString.Value;
 
-            if (query is null)
+            if (string.IsNullOrWhiteSpace(query))
             {
                 bindingContext.Result = ModelBindingResult.Failed();
                 return Task.CompletedTask;
