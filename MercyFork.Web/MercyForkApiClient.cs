@@ -43,7 +43,6 @@ namespace MercyFork.Web
 
             var result = await httpClient.GetAsync(uri.ToString());
 
-            //var result = await httpClient.PostAsJsonAsync(baseUri.ToString(), searchCriteria);
 
             if (result.IsSuccessStatusCode)
             {
