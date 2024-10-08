@@ -16,7 +16,7 @@ namespace MercyFork.Data
                 Forks = searchCriteria.Forks?.ToRange(),
                 //Followers = searchCriteria.Followers?.ToRange(),
                 SortField = searchCriteria.SortField is not null ? Enum.Parse<RepoSearchSort>(searchCriteria.SortField) : null,
-                Order = Enum.Parse<SortDirection>(searchCriteria.SortDirection),
+                Order = Enum.Parse<SortDirection>(searchCriteria.SortDirection ?? "desc"),
                 Page = searchCriteria.Page,
                 PerPage = searchCriteria.PageSize
             };
