@@ -5,7 +5,7 @@ name: Build MercyFork
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "*" ]
   pull_request:
     branches: [ "main" ]
 
@@ -19,7 +19,9 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
+        dotnet-quality: 'preview'
+        
     - name: Workload restore
       run: dotnet workload restore
     - name: Restore dependencies

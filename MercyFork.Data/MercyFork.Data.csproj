@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
@@ -7,9 +7,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Octokit" />
+		<PackageReference Include="Microsoft.Extensions.Options" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\MercyFork.Data.Models\MercyFork.Data.Models.csproj" />
-		<ProjectReference Include="..\MercyFork.Data\MercyFork.Data.csproj" />
-		<ProjectReference Include="..\MercyFork.ServiceDefaults\MercyFork.ServiceDefaults.csproj" />
 	</ItemGroup>
 
 </Project>
