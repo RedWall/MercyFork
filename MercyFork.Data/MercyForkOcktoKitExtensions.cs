@@ -9,6 +9,9 @@ namespace MercyFork.Data
         //extension method to convert RepoSearchCriteria to SearchRepositoriesRequest
         public static SearchRepositoriesRequest ToSearchRepositoriesRequest(this RepoSearchCriteria searchCriteria)
         {
+            if (string.IsNullOrWhiteSpace(searchCriteria.SortDirection))
+                searchCriteria.SortDirection = "Descending";
+
             return new SearchRepositoriesRequest(searchCriteria.SearchText)
             {
                 Archived = searchCriteria.Archived,
